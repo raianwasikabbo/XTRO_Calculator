@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>XTRO Calculator</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #02060c;
+  font-family: Arial, sans-serif;
+}
+
+.calculator {
+  width: 340px;
+  padding: 0 15px 15px;
+  background: #03244a;
+  border: 1px solid #0a4b82;
+  border-radius: 22px;
+  box-shadow: 0 15px 40px rgba(0,40,100,0.5);
+}
+
+.top {
+  height: 55px;
+  margin: 0 -15px 15px;
+  background: #063765;
+  border-radius: 22px 22px 12px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top h1 {
+  margin: 0;
+  color: white;
+  font-size: 21px;
+  letter-spacing: 2px;
+}
+
+#display {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #010407;
+  color: #66bfff;
+  border: 2px solid #0a4c88;
+  border-radius: 14px;
+  text-align: right;
+  font-size: 35px;
+  outline: none;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  height: 65px;
+  border: none;
+  border-radius: 14px;
+  font-size: 24px;
+  color: white;
+  background: #010203;
+  box-shadow: 0 4px 7px rgba(0,0,0,0.5);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+  transform: scale(0.94);
+}
+
+.operator {
+  background: #07518f;
+}
+
+.clear {
+  background: #c91616;
+}
+
+.multiply {
+  background: #07518f;
+}
+
+.equals {
+  background: #159447;
+  grid-column: span 2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="calculator">
+
+  <div class="top">
+    <h1>XTRO CALCULATOR</h1>
+  </div>
+
+  <input id="display" value="0" readonly>
+
+  <div class="buttons">
+
+    <button class="clear" onclick="clearDisplay()">C</button>
+
+    <button onclick="deleteLast()">⌫</button>
+
+    <button onclick="decimal()">.</button>
+
+    <button class="operator" onclick="operator('/')">÷</button>
+
+
+    <button onclick="number('7')">7</button>
+
+    <button onclick="number('8')">8</button>
+
+    <button onclick="number('9')">9</button>
+
+    <button class="multiply" onclick="operator('*')">×</button>
+
+
+    <button onclick="number('4')">4</button>
+
+    <button onclick="number('5')">5</button>
+
+    <button onclick="number('6')">6</button>
+
+    <button class="operator" onclick="operator('-')">−</button>
+
+
+    <button onclick="number('1')">1</button>
+
+    <button onclick="number('2')">2</button>
+
+    <button onclick="number('3')">3</button>
+
+    <button class="operator" onclick="operator('+')">+</button>
+
+
+    <button onclick="number('0')">0</button>
+
+    <button onclick="sign()">±</button>
+
+    <button class="equals" onclick="calculate()">=</button>
+
+  </div>
+
+</div>
+
+<script>
+
+let display = document.getElementById("display");
+
+let first = null;
+
+let op = null;
+
+let newNumber = false;
+
+
+function number(n) {
+
+  if (display.value === "Error") {
+    display.value = "0";
+  }
+
+  if (newNumber) {
+
+    display.value = n;
+
+    newNumber = false;
+
+  } else {
+
+    if (display.value === "0") {
+
+      display.value = n;
+
+    } else {
+
+      display.value += n;
+
+    }
+
+  }
+}
+
+
+function decimal() {
+
+  if (display.value === "Error") {
+    display.value = "0";
+  }
+
+  if (newNumber) {
+
+    display.value = "0.";
+
+    newNumber = false;
+
+    return;
+  }
+
+  if (!display.value.includes(".")) {
+
+    display.value += ".";
+
+  }
+}
+
+
+function operator(o) {
+
+  first = parseFloat(display.value);
+
+  op = o;
+
+  newNumber = true;
+}
+
+
+function calculate() {
+
+  if (first === null || op === null) {
+    return;
+  }
+
+  let second = parseFloat(display.value);
+
+  let result;
+
+
+  if (op === "+") {
+    result = first + second;
+  }
+
+
+  if (op === "-") {
+    result = first - second;
+  }
+
+
+  if (op === "*") {
+    result = first * second;
+  }
+
+
+  if (op === "/") {
+
+    if (second === 0) {
+
+      display.value = "Error";
+
+      first = null;
+
+      op = null;
+
+      return;
+    }
+
+    result = first / second;
+
+  }
+
+
+  display.value = result;
+
+  first = null;
+
+  op = null;
+
+  newNumber = true;
+}
+
+
+function clearDisplay() {
+
+  display.value = "0";
+
+  first = null;
+
+  op = null;
+
+  newNumber = false;
+}
+
+
+function deleteLast() {
+
+  if (
+    display.value !== "Error" &&
+    display.value.length > 1
+  ) {
+
+    display.value =
+      display.value.slice(0,-1);
+
+  } else {
+
+    display.value = "0";
+
+  }
+}
+
+
+function sign() {
+
+  if (
+    display.value !== "0" &&
+    display.value !== "Error"
+  ) {
+
+    display.value =
+      String(parseFloat(display.value) * -1);
+
+  }
+}
+
+</script>
+
+</body>
+</html>
